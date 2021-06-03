@@ -1,9 +1,13 @@
 package com.vyasmeet.rest.webservices.restfulwebservices.controller;
 
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
+
 import com.vyasmeet.rest.webservices.restfulwebservices.dto.UserDto;
 import com.vyasmeet.rest.webservices.restfulwebservices.exception.UserNotFoundException;
 import com.vyasmeet.rest.webservices.restfulwebservices.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -25,12 +29,19 @@ public class UserController {
 
     // GET /users/{id}
     @GetMapping("/users/{id}")
-    public User findUserByID(@PathVariable int id) {
+    public EntityModel<User> findUserByID(@PathVariable int id) {
         User user = userService.findWithID(id);
         if (user == null) {
             throw new UserNotFoundException("Can't find ID: "+id);
         }
-        return user;
+        // Created EntityModel of User for passing links with Data via Hateoas
+        EntityModel<User> model = EntityModel.of(user);
+        // Adding link to getUsers - For fetching all users API
+        WebMvcLinkBuilder linkToUsers = linkTo(
+                methodOn(this.getClass())
+                        .getUsers());
+        model.add(linkToUsers.withRel("get-all-users"));
+        return model;
     }
 
     // DELETE /user/{id}
