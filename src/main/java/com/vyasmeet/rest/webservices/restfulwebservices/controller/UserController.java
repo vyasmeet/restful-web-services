@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import javax.validation.Valid;
 import java.net.URI;
 import java.util.List;
 
@@ -32,7 +33,7 @@ public class UserController {
         return user;
     }
 
-    // Delete /user/{id}
+    // DELETE /user/{id}
     @DeleteMapping("/users/{id}")
     public void deleteUserForID(@PathVariable int id) {
         User deletedUser = userService.deleteByID(id);
@@ -42,8 +43,9 @@ public class UserController {
         }
     }
 
+    // POST /users
     @PostMapping("/users")
-    public ResponseEntity<Object> saveUser(@RequestBody User user) {
+    public ResponseEntity<Object> saveUser(@Valid @RequestBody User user) {
         User newUser = userService.save(user);
         // Return the new URI back.
         // with HTTP created status code.

@@ -1,10 +1,18 @@
 package com.vyasmeet.rest.webservices.restfulwebservices.model;
 
+import javax.validation.constraints.Past;
+import javax.validation.constraints.Size;
 import java.util.Date;
 
 public class User {
     private Integer id;
+
+    // Name should have minimum 2 characters
+    @Size(min = 2, message = "Name should have at least 2 characters")
     private String name;
+
+    // Birthdate must be in past
+    @Past(message = "Birthdate can't be in future")
     private Date birthDate;
 
     public User(Integer id, String name, Date birthDate) {
