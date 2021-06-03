@@ -16,12 +16,12 @@ public class UserController {
     @Autowired
     private UserDto userService;
 
+    // GET /users
     @GetMapping("/users")
     public List<User> getUsers() {
         return userService.getAll();
     }
 
-    // GET /users
     // GET /users/{id}
     @GetMapping("/users/{id}")
     public User findUserByID(@PathVariable int id) {
@@ -30,6 +30,16 @@ public class UserController {
             throw new UserNotFoundException("Can't find ID: "+id);
         }
         return user;
+    }
+
+    // Delete /user/{id}
+    @DeleteMapping("/users/{id}")
+    public void deleteUserForID(@PathVariable int id) {
+        User deletedUser = userService.deleteByID(id);
+        if (deletedUser == null) {
+            // If we can't find the user to Delete for ID, return UserNotFoundException
+            throw new UserNotFoundException("Can't find ID: "+id);
+        }
     }
 
     @PostMapping("/users")
