@@ -1,6 +1,7 @@
 package com.vyasmeet.rest.webservices.restfulwebservices.controller;
 
 import com.vyasmeet.rest.webservices.restfulwebservices.dto.UserDto;
+import com.vyasmeet.rest.webservices.restfulwebservices.exception.UserNotFoundException;
 import com.vyasmeet.rest.webservices.restfulwebservices.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -15,16 +16,20 @@ public class UserController {
     @Autowired
     private UserDto userService;
 
+    @GetMapping("/users")
+    public List<User> getUsers() {
+        return userService.getAll();
+    }
+
     // GET /users
     // GET /users/{id}
     @GetMapping("/users/{id}")
     public User findUserByID(@PathVariable int id) {
-        return userService.findWithID(id);
-    }
-
-    @GetMapping("/users")
-    public List<User> getUsers() {
-        return userService.getAll();
+        User user = userService.findWithID(id);
+        if (user == null) {
+            throw new UserNotFoundException("Can't find ID: "+id);
+        }
+        return user;
     }
 
     @PostMapping("/users")
