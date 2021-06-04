@@ -2,7 +2,9 @@ package com.vyasmeet.rest.webservices.restfulwebservices.controller;
 
 import com.vyasmeet.rest.webservices.restfulwebservices.dto.UserDto;
 import com.vyasmeet.rest.webservices.restfulwebservices.exception.UserNotFoundException;
+import com.vyasmeet.rest.webservices.restfulwebservices.model.Post;
 import com.vyasmeet.rest.webservices.restfulwebservices.model.User;
+import com.vyasmeet.rest.webservices.restfulwebservices.repository.PostRepository;
 import com.vyasmeet.rest.webservices.restfulwebservices.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.EntityModel;
@@ -24,6 +26,9 @@ public class UserJPAController {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private PostRepository postRepository;
 
     // GET /jpa/users
     @GetMapping("/jpa/users")
@@ -68,6 +73,39 @@ public class UserJPAController {
                 .fromCurrentRequest()
                 .path("/{id}")
                 .buildAndExpand(newUser.getId())
+                .toUri();
+        return ResponseEntity.created(location).build();
+    }
+
+    // GET All Post for UserID
+    @GetMapping("/jpa/users/{id}/posts")
+    public List<Post> getAllPostsForUser(@PathVariable int id) {
+        Optional<User> optionalUser = userRepository.findById(id);
+        if (!optionalUser.isPresent()) {
+            throw new UserNotFoundException("Can't find ID: "+id);
+        }
+        return optionalUser.get().getPosts();
+    }
+
+    // POST Create a post for specific user
+    @PostMapping("/jpa/users/{id}/posts")
+    public ResponseEntity<Object> savePost(@PathVariable int id, @Valid @RequestBody Post post) {
+        Optional<User> userOptional = userRepository.findById(id);
+
+        if (!userOptional.isPresent()) {
+            throw new UserNotFoundException("Can't find ID: "+id);
+        }
+
+        User user = userOptional.get();
+        post.setUser(user);
+        postRepository.save(post);
+
+        // Return the new URI back.
+        // with HTTP created status code.
+        URI location = ServletUriComponentsBuilder
+                .fromCurrentRequest()
+                .path("/{id}")
+                .buildAndExpand(post.getId())
                 .toUri();
         return ResponseEntity.created(location).build();
     }
