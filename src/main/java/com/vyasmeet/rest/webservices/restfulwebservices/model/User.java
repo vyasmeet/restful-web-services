@@ -1,10 +1,17 @@
 package com.vyasmeet.rest.webservices.restfulwebservices.model;
 
+import javax.annotation.processing.Generated;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
 import javax.validation.constraints.Past;
 import javax.validation.constraints.Size;
 import java.util.Date;
 
+@Entity
 public class User {
+    @Id
+    @GeneratedValue
     private Integer id;
 
     // Name should have minimum 2 characters
@@ -14,6 +21,9 @@ public class User {
     // Birthdate must be in past
     @Past(message = "Birthdate can't be in future")
     private Date birthDate;
+
+    protected User() {
+    }
 
     public User(Integer id, String name, Date birthDate) {
         this.id = id;
