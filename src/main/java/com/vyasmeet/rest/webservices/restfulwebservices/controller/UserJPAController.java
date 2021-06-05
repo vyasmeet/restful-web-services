@@ -41,7 +41,7 @@ public class UserJPAController {
     public EntityModel<User> findUserByID(@PathVariable int id) {
         Optional<User> user = userRepository.findById(id);
 
-        if (!user.isPresent()) {
+        if (user.isEmpty()) {
             throw new UserNotFoundException("Can't find ID: "+id);
         }
 
@@ -81,7 +81,7 @@ public class UserJPAController {
     @GetMapping("/jpa/users/{id}/posts")
     public List<Post> getAllPostsForUser(@PathVariable int id) {
         Optional<User> optionalUser = userRepository.findById(id);
-        if (!optionalUser.isPresent()) {
+        if (optionalUser.isEmpty()) {
             throw new UserNotFoundException("Can't find ID: "+id);
         }
         return optionalUser.get().getPosts();
@@ -92,7 +92,7 @@ public class UserJPAController {
     public ResponseEntity<Object> savePost(@PathVariable int id, @Valid @RequestBody Post post) {
         Optional<User> userOptional = userRepository.findById(id);
 
-        if (!userOptional.isPresent()) {
+        if (userOptional.isEmpty()) {
             throw new UserNotFoundException("Can't find ID: "+id);
         }
 

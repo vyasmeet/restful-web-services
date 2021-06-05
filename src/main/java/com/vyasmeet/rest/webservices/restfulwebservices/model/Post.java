@@ -3,6 +3,7 @@ package com.vyasmeet.rest.webservices.restfulwebservices.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
+import javax.validation.constraints.Size;
 
 @Entity
 public class Post {
@@ -10,6 +11,8 @@ public class Post {
     @GeneratedValue
     private Integer id;
 
+    // Description should have minimum 10 characters
+    @Size(min = 10, message = "Description should have at least 2 characters")
     private String description;
 
     @ManyToOne(fetch= FetchType.LAZY)
